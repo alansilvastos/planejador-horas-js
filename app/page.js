@@ -14,9 +14,9 @@ const nomesDias = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
 export default function PlanejadorHoras() {
   const [horasPorDia, setHorasPorDia] = useState(Array(7).fill(0));
 
-  const handleChange = (index, value) => {
+  const ajustarHora = (i, delta) => {
     const novo = [...horasPorDia];
-    novo[index] = parseFloat(value) || 0;
+    novo[i] = Math.max(0, Math.round((novo[i] + delta) * 2) / 2); // intervalos de 0.5
     setHorasPorDia(novo);
   };
 
@@ -29,27 +29,31 @@ export default function PlanejadorHoras() {
   const meta = 600;
 
   return (
-    <div style={{ background: '#000', color: '#fff', padding: 20, fontFamily: 'sans-serif' }}>
-      <h1 style={{ fontSize: 24, fontWeight: 'bold', color: '#00f' }}>Planejador de Horas 2025/2026</h1>
+    <div style={{
+      background: '#f9f9f9', color: '#333',
+      padding: 20, fontFamily: 'Poppins, sans-serif',
+      minHeight: '100vh'
+    }}>
+      <h1 style={{ fontSize: 24, fontWeight: 'bold', color: '#1a73e8' }}>Planejador de Horas 2025/2026</h1>
       <p>Meta anual: 600 horas (set/2025 a ago/2026)</p>
 
       <div style={{ marginTop: 20 }}>
-        <h2 style={{ fontSize: 18 }}>Horas por Dia da Semana</h2>
+        <h2 style={{ fontSize: 18, marginBottom: 12 }}>Horas por Dia da Semana</h2>
         {horasPorDia.map((valor, i) => (
-          <div key={i} style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
-            <label style={{ width: 80 }}>{nomesDias[i]}:</label>
-            <input
-              type="number" min="0" step="0.25"
-              value={valor} onChange={e => handleChange(i, e.target.value)}
-              style={{ width: 80, marginRight: 10 }}
-            />
-            <span>h/dia</span>
+          <div key={i} style={{
+            display: 'flex', alignItems: 'center',
+            marginBottom: 12, gap: 10
+          }}>
+            <label style={{ width: 60 }}>{nomesDias[i]}:</label>
+            <button onClick={() => ajustarHora(i, -0.5)} style={{ padding: '4px 10px' }}>-</button>
+            <span style={{ width: 50, textAlign: 'center' }}>{valor.toFixed(1)} h</span>
+            <button onClick={() => ajustarHora(i, 0.5)} style={{ padding: '4px 10px' }}>+</button>
           </div>
         ))}
       </div>
 
       <div style={{ marginTop: 30 }}>
-        <h2 style={{ fontSize: 18, color: '#00f' }}>Horas por Mês</h2>
+        <h2 style={{ fontSize: 18, color: '#1a73e8' }}>Horas por Mês</h2>
         <ul style={{ columns: 2, listStyle: 'none', padding: 0 }}>
           {horasMes.map((hm, i) => (
             <li key={i}>{nomesMeses[i]}: {hm.toFixed(1)} h</li>
@@ -59,7 +63,7 @@ export default function PlanejadorHoras() {
 
       <div style={{ marginTop: 20 }}>
         <strong>Total Anual:</strong> {totalAno.toFixed(1)} h
-        <p style={{ color: totalAno >= meta ? 'lime' : 'orange' }}>
+        <p style={{ color: totalAno >= meta ? 'green' : 'orange' }}>
           {totalAno >= meta ? '✔ Meta Atingida!' : '⚠ Ainda não atingiu a meta.'}
         </p>
       </div>
