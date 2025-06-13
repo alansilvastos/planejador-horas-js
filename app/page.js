@@ -6,8 +6,20 @@ const diasPorMes = {"2025-09": [5, 5, 4, 4, 4, 4, 4], "2025-10": [4, 4, 5, 5, 5,
 const nomesMeses = ["Setembro", "Outubro", "Novembro", "Dezembro", "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto"];
 const nomesDias = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
 
+const perfis = {
+  trabalho: [2, 2, 2, 0, 2, 3, 2],
+  idoso:    [2, 2, 2, 2, 2, 2, 0],
+  fimsemana: [1, 1, 1, 1, 1, 5, 2],
+  auxiliar: [1, 1, 1, 1, 1, 2, 2],
+};
+
 export default function PlanejadorHoras() {
   const [horasPorDia, setHorasPorDia] = useState(Array(7).fill(0));
+
+  const aplicarPerfil = (tipo) => {
+    setHorasPorDia(perfis[tipo] || Array(7).fill(0));
+  };
+
   const ajustarHora = (i, delta) => {
     const novo = [...horasPorDia];
     novo[i] = Math.max(0, Math.round((novo[i] + delta) * 2) / 2);
@@ -52,14 +64,24 @@ export default function PlanejadorHoras() {
       <h1 style={{ fontSize: 24, fontWeight: 'bold', color: '#1a73e8' }}>Planejamento - Pioneiro Regular 2025/2026</h1>
       <p>Alvo anual: 600 horas (set/2025 a ago/2026)</p>
 
-      <div style={{ marginTop: 20 }}>
+      <div style={{ marginBottom: 20 }}>
+        <h2 style={{ fontSize: 16, marginBottom: 8 }}>Selecionar Perfil:</h2>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+          <button onClick={() => aplicarPerfil("trabalho")}>🧑‍💼 Trabalho</button>
+          <button onClick={() => aplicarPerfil("idoso")}>👴 Idoso</button>
+          <button onClick={() => aplicarPerfil("fimsemana")}>⏳ Fim de Semana</button>
+          <button onClick={() => aplicarPerfil("auxiliar")}>🕊️ Auxiliar (30h)</button>
+        </div>
+      </div>
+
+      <div>
         <h2 style={{ fontSize: 18, marginBottom: 12 }}>Horas por Dia da Semana</h2>
         {horasPorDia.map((valor, i) => (
           <div key={i} style={{ display: 'flex', alignItems: 'center', marginBottom: 12, gap: 10 }}>
             <label style={{ width: 60 }}>{nomesDias[i]}:</label>
-            <button onClick={() => ajustarHora(i, -0.5)} style={{ padding: '4px 10px' }}>-</button>
+            <button onClick={() => ajustarHora(i, -0.5)}>-</button>
             <span style={{ width: 50, textAlign: 'center' }}>{valor.toFixed(1)} h</span>
-            <button onClick={() => ajustarHora(i, 0.5)} style={{ padding: '4px 10px' }}>+</button>
+            <button onClick={() => ajustarHora(i, 0.5)}>+</button>
           </div>
         ))}
       </div>
