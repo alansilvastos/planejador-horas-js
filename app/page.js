@@ -1,22 +1,16 @@
 'use client';
 import { useState } from "react";
+import jsPDF from "jspdf";
 
 const diasPorMes = {"2025-09": [5, 5, 4, 4, 4, 4, 4], "2025-10": [4, 4, 5, 5, 5, 4, 4], "2025-11": [4, 4, 4, 4, 4, 5, 5], "2025-12": [5, 5, 5, 4, 4, 4, 4], "2026-01": [4, 4, 4, 5, 5, 5, 4], "2026-02": [4, 4, 4, 4, 4, 4, 4], "2026-03": [5, 5, 4, 4, 4, 4, 5], "2026-04": [4, 4, 5, 5, 4, 4, 4], "2026-05": [4, 4, 4, 4, 5, 5, 5], "2026-06": [5, 5, 4, 4, 4, 4, 4], "2026-07": [4, 4, 5, 5, 5, 4, 4], "2026-08": [5, 4, 4, 4, 4, 5, 5]};
-
-const nomesMeses = [
-  "Setembro", "Outubro", "Novembro", "Dezembro",
-  "Janeiro", "Fevereiro", "Março", "Abril",
-  "Maio", "Junho", "Julho", "Agosto"
-];
-
+const nomesMeses = ["Setembro", "Outubro", "Novembro", "Dezembro", "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto"];
 const nomesDias = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
 
 export default function PlanejadorHoras() {
   const [horasPorDia, setHorasPorDia] = useState(Array(7).fill(0));
-
   const ajustarHora = (i, delta) => {
     const novo = [...horasPorDia];
-    novo[i] = Math.max(0, Math.round((novo[i] + delta) * 2) / 2); // intervalos de 0.5
+    novo[i] = Math.max(0, Math.round((novo[i] + delta) * 2) / 2);
     setHorasPorDia(novo);
   };
 
@@ -26,24 +20,42 @@ export default function PlanejadorHoras() {
     return dias.reduce((acc, qtd, i) => acc + (qtd * horasPorDia[i]), 0);
   });
   const totalAno = horasMes.reduce((a, b) => a + b, 0);
-  const meta = 600;
+  const alvo = 600;
+  const mesAlvo = (() => {
+    let acum = 0;
+    for (let i = 0; i < horasMes.length; i++) {
+      acum += horasMes[i];
+      if (acum >= alvo) return i;
+    }
+    return -1;
+  })();
+
+  const exportarPDF = () => {
+    const doc = new jsPDF();
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text("Planejamento - Pioneiro Regular 2025/2026", 10, 20);
+    doc.setFontSize(12);
+    horasMes.forEach((hm, i) => {
+      const label = nomesMeses[i] + ": " + hm.toFixed(1) + " h";
+      doc.text(label, 10, 35 + i * 8);
+    });
+    doc.text("Total: " + totalAno.toFixed(1) + " h", 10, 140);
+    doc.save("planejamento_pioneiro_2025_2026.pdf");
+  };
 
   return (
     <div style={{
-      background: '#f9f9f9', color: '#333',
-      padding: 20, fontFamily: 'Poppins, sans-serif',
-      minHeight: '100vh'
+      background: '#f9f9f9', color: '#333', padding: 20,
+      fontFamily: 'Poppins, sans-serif', minHeight: '100vh'
     }}>
-      <h1 style={{ fontSize: 24, fontWeight: 'bold', color: '#1a73e8' }}>Planejador de Horas 2025/2026</h1>
-      <p>Meta anual: 600 horas (set/2025 a ago/2026)</p>
+      <h1 style={{ fontSize: 24, fontWeight: 'bold', color: '#1a73e8' }}>Planejamento - Pioneiro Regular 2025/2026</h1>
+      <p>Alvo anual: 600 horas (set/2025 a ago/2026)</p>
 
       <div style={{ marginTop: 20 }}>
         <h2 style={{ fontSize: 18, marginBottom: 12 }}>Horas por Dia da Semana</h2>
         {horasPorDia.map((valor, i) => (
-          <div key={i} style={{
-            display: 'flex', alignItems: 'center',
-            marginBottom: 12, gap: 10
-          }}>
+          <div key={i} style={{ display: 'flex', alignItems: 'center', marginBottom: 12, gap: 10 }}>
             <label style={{ width: 60 }}>{nomesDias[i]}:</label>
             <button onClick={() => ajustarHora(i, -0.5)} style={{ padding: '4px 10px' }}>-</button>
             <span style={{ width: 50, textAlign: 'center' }}>{valor.toFixed(1)} h</span>
@@ -56,17 +68,26 @@ export default function PlanejadorHoras() {
         <h2 style={{ fontSize: 18, color: '#1a73e8' }}>Horas por Mês</h2>
         <ul style={{ columns: 2, listStyle: 'none', padding: 0 }}>
           {horasMes.map((hm, i) => (
-            <li key={i}>{nomesMeses[i]}: {hm.toFixed(1)} h</li>
+            <li key={i} style={{ fontWeight: mesAlvo === i ? 'bold' : 'normal' }}>
+              {nomesMeses[i]}: {hm.toFixed(1)} h{mesAlvo === i ? " 🎯" : ""}
+            </li>
           ))}
         </ul>
       </div>
 
       <div style={{ marginTop: 20 }}>
         <strong>Total Anual:</strong> {totalAno.toFixed(1)} h
-        <p style={{ color: totalAno >= meta ? 'green' : 'orange' }}>
-          {totalAno >= meta ? '✔ Meta Atingida!' : '⚠ Ainda não atingiu a meta.'}
+        <p style={{ color: totalAno >= alvo ? 'green' : 'orange' }}>
+          {totalAno >= alvo ? '✔ Alvo Atingido!' : '⚠ Ainda não atingiu o alvo.'}
         </p>
       </div>
+
+      <button onClick={exportarPDF} style={{
+        marginTop: 20, padding: '8px 16px', backgroundColor: '#1a73e8',
+        color: '#fff', border: 'none', borderRadius: 4, cursor: 'pointer'
+      }}>
+        Exportar para PDF
+      </button>
     </div>
   );
 }
