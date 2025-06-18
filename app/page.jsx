@@ -1,1 +1,1 @@
-// updated main component placeholder
+// atualize com o conteúdo real
