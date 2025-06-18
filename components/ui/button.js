@@ -1,1 +1,1 @@
-// button component placeholder
+export const Button = ({ children, onClick, variant }) => <button onClick={onClick} className={`px-3 py-1 rounded ${variant === 'outline' ? 'border' : 'bg-blue-600 text-white'}`}>{children}</button>;

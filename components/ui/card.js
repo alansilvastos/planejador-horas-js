@@ -1,1 +1,2 @@
-// card component placeholder
+export const Card = ({ children, className }) => <div className={`shadow p-4 rounded ${className}`}>{children}</div>;
+export const CardContent = ({ children, className }) => <div className={className}>{children}</div>;
