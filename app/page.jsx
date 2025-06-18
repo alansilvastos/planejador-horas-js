@@ -1,4 +1,5 @@
-// Planejador de Horas - Pioneiro (com PDF personalizado e marcação de mês do alvo)
+'use client';
+
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
