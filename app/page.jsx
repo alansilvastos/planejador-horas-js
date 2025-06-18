@@ -1,5 +1,6 @@
-'use client';
+'use client'
 
+// Planejador de Horas - Pioneiro (com PDF personalizado e marcação de mês do alvo)
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,9 +25,7 @@ export default function PlanejadorHoras() {
   const [horasPorDia, setHorasPorDia] = useState(Array(7).fill(0));
   const [tipo, setTipo] = useState("regular");
 
-  const handleLimpar = () => {
-    setHorasPorDia(Array(7).fill(0));
-  };
+  const handleLimpar = () => setHorasPorDia(Array(7).fill(0));
 
   const incrementar = (i) => {
     const novo = [...horasPorDia];
