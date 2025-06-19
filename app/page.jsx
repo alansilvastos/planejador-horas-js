@@ -1,9 +1,5 @@
-'use client'
-
-// Planejador de Horas - Pioneiro (com PDF personalizado e marcação de mês do alvo)
+"use client";
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { jsPDF } from "jspdf";
 
 const meses = [
@@ -25,7 +21,9 @@ export default function PlanejadorHoras() {
   const [horasPorDia, setHorasPorDia] = useState(Array(7).fill(0));
   const [tipo, setTipo] = useState("regular");
 
-  const handleLimpar = () => setHorasPorDia(Array(7).fill(0));
+  const handleLimpar = () => {
+    setHorasPorDia(Array(7).fill(0));
+  };
 
   const incrementar = (i) => {
     const novo = [...horasPorDia];
@@ -93,56 +91,48 @@ export default function PlanejadorHoras() {
       <h1 className="text-2xl font-bold mb-4">Planejamento – Pioneiro</h1>
 
       <label className="block mb-2 font-medium">Escolha o tipo:</label>
-      <select
-        className="mb-4 p-2 border rounded w-full"
-        value={tipo}
-        onChange={(e) => setTipo(e.target.value)}
-      >
+      <select className="mb-4 p-2 border rounded w-full" value={tipo} onChange={(e) => setTipo(e.target.value)}>
         {Object.entries(tipos).map(([key, val]) => (
           <option key={key} value={key}>{val.label}</option>
         ))}
       </select>
 
-      <Card className="mb-4">
-        <CardContent className="p-4">
-          <h2 className="text-lg font-semibold mb-2">Horas por Dia da Semana</h2>
-          <div className="grid grid-cols-1 gap-2">
-            {diasSemana.map((dia, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <span className="w-12">{dia}:</span>
-                <button onClick={() => decrementar(i)} className="px-2 py-1 bg-gray-200 rounded">-</button>
-                <span className="w-12 text-center">{horasPorDia[i].toFixed(1)} h</span>
-                <button onClick={() => incrementar(i)} className="px-2 py-1 bg-gray-200 rounded">+</button>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="flex justify-between mb-4">
-        <Button onClick={handleLimpar} variant="outline">Limpar</Button>
-        <Button onClick={exportarPDF}>Exportar para PDF</Button>
+      <div className="mb-4 p-4 border rounded">
+        <h2 className="text-lg font-semibold mb-2">Horas por Dia da Semana</h2>
+        <div className="grid grid-cols-1 gap-2">
+          {diasSemana.map((dia, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <span className="w-12">{dia}:</span>
+              <button onClick={() => decrementar(i)} className="px-2 py-1 bg-gray-200 rounded">-</button>
+              <span className="w-12 text-center">{horasPorDia[i].toFixed(1)} h</span>
+              <button onClick={() => incrementar(i)} className="px-2 py-1 bg-gray-200 rounded">+</button>
+            </div>
+          ))}
+        </div>
       </div>
 
-      <Card>
-        <CardContent className="p-4">
-          <h2 className="text-lg font-semibold mb-2">Horas por Mês</h2>
-          <ul className="grid grid-cols-2 gap-2">
-            {meses.map((mes, i) => {
-              const h = horasMes[i];
-              const ok = tipos[tipo].tipo === "mensal" ? h >= alvo : true;
-              return (
-                <li key={i} className={ok ? "text-green-700" : "text-red-600"}>
-                  <strong>{mes}:</strong> {h.toFixed(1)} h {tipos[tipo].tipo === "mensal" && (ok ? "✔" : "⚠")}
-                </li>
-              );
-            })}
-          </ul>
-          {mesAlvoAnual && (
-            <p className="mt-4 text-blue-600 font-medium">✔ Alvo anual atingido em: {mesAlvoAnual}</p>
-          )}
-        </CardContent>
-      </Card>
+      <div className="flex justify-between mb-4">
+        <button onClick={handleLimpar} className="px-4 py-2 border rounded">Limpar</button>
+        <button onClick={exportarPDF} className="px-4 py-2 bg-blue-600 text-white rounded">Exportar para PDF</button>
+      </div>
+
+      <div className="p-4 border rounded">
+        <h2 className="text-lg font-semibold mb-2">Horas por Mês</h2>
+        <ul className="grid grid-cols-2 gap-2">
+          {meses.map((mes, i) => {
+            const h = horasMes[i];
+            const ok = tipos[tipo].tipo === "mensal" ? h >= alvo : true;
+            return (
+              <li key={i} className={ok ? "text-green-700" : "text-red-600"}>
+                <strong>{mes}:</strong> {h.toFixed(1)} h {tipos[tipo].tipo === "mensal" && (ok ? "✔" : "⚠")}
+              </li>
+            );
+          })}
+        </ul>
+        {mesAlvoAnual && (
+          <p className="mt-4 text-blue-600 font-medium">✔ Alvo anual atingido em: {mesAlvoAnual}</p>
+        )}
+      </div>
     </div>
   );
 }
