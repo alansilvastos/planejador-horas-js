@@ -1,3 +1,1 @@
-export function Button({ children, ...props }) {
-  return <button {...props}>{children}</button>;
-}
+export function Button({ children }) { return <button>{children}</button>; }
