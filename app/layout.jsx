@@ -1,14 +1,14 @@
-import "@/styles/globals.css";
+import '../styles/globals.css';
 
 export const metadata = {
-  title: "Planejador de Horas do Pioneiro",
-  description: "Organize suas horas com facilidade",
+  title: 'Planejador de Horas',
+  description: 'Acompanhe suas metas como pioneiro',
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="pt">
-      <body className="bg-white text-black p-4">{children}</body>
+    <html lang="pt-BR">
+      <body>{children}</body>
     </html>
   );
 }

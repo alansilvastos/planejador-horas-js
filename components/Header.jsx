@@ -1,7 +1,12 @@
-export default function Header() {
+export default function Header({ selected, setSelected }) {
   return (
-    <header className="p-4 bg-blue-600 text-white text-center font-bold text-xl rounded-b-xl">
-      Planejador de Horas do Pioneiro
-    </header>
+    <div className="header">
+      <h1>Planejador de Horas</h1>
+      <select value={selected} onChange={(e) => setSelected(e.target.value)}>
+        <option value="regular">Pioneiro Regular (600h/ano)</option>
+        <option value="aux30">Pioneiro Auxiliar (30h/mês)</option>
+        <option value="aux15">Pioneiro Auxiliar (15h/mês)</option>
+      </select>
+    </div>
   );
 }

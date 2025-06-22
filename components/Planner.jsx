@@ -1,43 +1,52 @@
-"use client";
+import { useState } from 'react';
 
-import { useState } from "react";
+const goals = {
+  regular: 600,
+  aux30: 360,
+  aux15: 180,
+};
 
-export default function Planner() {
-  const [dias, setDias] = useState({
-    segunda: 0,
-    terca: 0,
-    quarta: 0,
-    quinta: 0,
-    sexta: 0,
-    sabado: 0,
-    domingo: 0,
-  });
+export default function Planner({ goal }) {
+  const start = new Date('2025-09-01');
+  const end = new Date('2026-08-31');
+  const months = [];
+  const totalGoal = goals[goal];
 
-  const calcularTotal = () =>
-    Object.values(dias).reduce((total, horas) => total + Number(horas), 0);
+  let current = new Date(start);
+  while (current <= end) {
+    months.push(new Date(current));
+    current.setMonth(current.getMonth() + 1);
+  }
 
-  const calcularMeta = () => (calcularTotal() * 52).toFixed(1);
+  const [monthly, setMonthly] = useState(Array(months.length).fill(0));
+  const total = monthly.reduce((a, b) => a + b, 0);
+
+  const handleChange = (e, i) => {
+    const updated = [...monthly];
+    updated[i] = Number(e.target.value);
+    setMonthly(updated);
+  };
+
+  const cumulative = monthly.reduce((acc, val, idx) => {
+    const sum = (acc.length ? acc[acc.length - 1] : 0) + val;
+    acc.push(sum);
+    return acc;
+  }, []);
+
+  const reachedIndex = cumulative.findIndex(sum => sum >= totalGoal);
 
   return (
-    <main className="p-4 max-w-md mx-auto">
-      <h2 className="text-lg font-semibold mb-4">Horas por dia da semana</h2>
-      {Object.keys(dias).map((dia) => (
-        <div key={dia} className="mb-2 flex justify-between items-center">
-          <label className="capitalize">{dia}</label>
-          <input
-            type="number"
-            value={dias[dia]}
-            onChange={(e) =>
-              setDias({ ...dias, [dia]: e.target.value || 0 })
-            }
-            className="border p-1 w-20 text-right rounded"
-          />
-        </div>
-      ))}
-      <div className="mt-4">
-        <p>Total semanal: <strong>{calcularTotal()} h</strong></p>
-        <p>Meta anual: <strong>{calcularMeta()} h</strong></p>
-      </div>
-    </main>
+    <div className="planner">
+      {months.map((date, i) => {
+        const label = date.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
+        return (
+          <div key={i} className={i === reachedIndex ? 'month highlight' : 'month'}>
+            <strong>{label}</strong>
+            <input type="number" value={monthly[i]} onChange={(e) => handleChange(e, i)} />
+          </div>
+        );
+      })}
+      <p>Total: {total} / {totalGoal} horas</p>
+    </div>
   );
 }
