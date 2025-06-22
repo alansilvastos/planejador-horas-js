@@ -1,14 +1,14 @@
+import "@/styles/globals.css";
+
 export const metadata = {
-  title: 'Planejador de Horas do Pioneiro',
-  description: 'App para planejamento de horas do pioneiro com exportação em PDF.',
+  title: "Planejador de Horas do Pioneiro",
+  description: "Organize suas horas com facilidade",
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="pt-BR">
-      <body className="bg-gray-50 text-gray-900 p-4 font-sans">
-        {children}
-      </body>
+    <html lang="pt">
+      <body className="bg-white text-black p-4">{children}</body>
     </html>
   );
 }
