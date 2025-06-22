@@ -1,11 +1,11 @@
-import Header from "@/components/Header";
-import Planner from "@/components/Planner";
+import Header from "../components/Header";
+import Planner from "../components/Planner";
 
-export default function Home() {
+export default function Page() {
   return (
-    <main>
+    <>
       <Header />
       <Planner />
-    </main>
+    </>
   );
 }
