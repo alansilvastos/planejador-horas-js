@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import months from '@/data/months';
+import months from '../data/months';
 import './globals.css';
 
 const metas = {
