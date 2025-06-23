@@ -1,17 +1,18 @@
-import './globals.css';
-import { Poppins } from 'next/font/google';
-
-const poppins = Poppins({ subsets: ['latin'], weight: ['400', '600'] });
-
-export const metadata = {
-  title: 'Planejador de Horas do Pioneiro',
-  description: 'Calcule e planeje suas horas de serviço no período de setembro a agosto.',
-};
-
 export default function RootLayout({ children }) {
   return (
     <html lang="pt-BR">
-      <body className={poppins.className}>{children}</body>
+      <body>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '100vh',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: '1rem'
+        }}>
+          {children}
+        </div>
+      </body>
     </html>
   );
 }
