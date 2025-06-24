@@ -55,7 +55,7 @@ export default function FormularioHoras() {
         ))}
       </div>
 
-      <ResultadoMeses planejamento={planejamento} totalAnual={totalAnual} />
+      <ResultadoMeses planejamento={planejamento} totalAnual={totalAnual} tipo={tipoSelecionado} />
     </div>
   );
 }
