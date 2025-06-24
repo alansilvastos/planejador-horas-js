@@ -1,53 +1,66 @@
-import { useState } from 'react';
+'use client';
+import { useState, useEffect } from 'react';
+import calendario from '../data/calendario';
+import ResultadoMeses from './ResultadoMeses';
 
-const diasSemana = ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo'];
+const diasSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
 
-function FormularioHoras({ onDistribuicaoGerada }) {
+export default function FormularioHoras() {
   const [horasPorDia, setHorasPorDia] = useState({
-    segunda: 0,
-    terca: 0,
-    quarta: 0,
-    quinta: 0,
-    sexta: 0,
-    sabado: 0,
-    domingo: 0,
+    Segunda: 0,
+    Terça: 0,
+    Quarta: 0,
+    Quinta: 0,
+    Sexta: 0,
+    Sábado: 0,
+    Domingo: 0,
   });
 
-  const handleChange = (dia, valor) => {
-    setHorasPorDia({ ...horasPorDia, [dia]: Number(valor) });
-  };
+  const [planejamento, setPlanejamento] = useState({});
+  const [totalAnual, setTotalAnual] = useState(0);
 
-  const gerarDistribuicao = async () => {
-    const calendario = await import('../data/calendario');
-    const distribuicao = calendario.calcularHorasMensais(horasPorDia);
-    onDistribuicaoGerada(distribuicao);
+  useEffect(() => {
+    const novoPlanejamento = {};
+    let total = 0;
+
+    Object.keys(calendario).forEach((mes) => {
+      const dias = calendario[mes];
+      let totalMes = 0;
+
+      diasSemana.forEach((dia) => {
+        totalMes += dias[dia] * horasPorDia[dia];
+      });
+
+      novoPlanejamento[mes] = totalMes;
+      total += totalMes;
+    });
+
+    setPlanejamento(novoPlanejamento);
+    setTotalAnual(total);
+  }, [horasPorDia]);
+
+  const alterarHoras = (dia, valor) => {
+    setHorasPorDia((prev) => ({
+      ...prev,
+      [dia]: Math.max(0, prev[dia] + valor)
+    }));
   };
 
   return (
-    <div className="flex flex-col items-center gap-2 mt-4">
-      <h2 className="text-lg font-semibold">Quantas horas você pode fazer por dia?</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div className="w-full max-w-xl mx-auto text-center space-y-6">
+      <h2 className="text-2xl font-bold">Horas por Dia da Semana</h2>
+      <div className="grid grid-cols-1 gap-3">
         {diasSemana.map((dia) => (
-          <div key={dia} className="flex flex-col items-center">
-            <label>{dia.charAt(0).toUpperCase() + dia.slice(1)}</label>
-            <input
-              type="number"
-              min="0"
-              value={horasPorDia[dia]}
-              onChange={(e) => handleChange(dia, e.target.value)}
-              className="border p-1 w-20 text-center"
-            />
+          <div key={dia} className="flex justify-between items-center gap-4">
+            <span className="w-20 text-left">{dia.slice(0, 3)}:</span>
+            <button className="bg-gray-500 text-white px-3 py-1 rounded" onClick={() => alterarHoras(dia, -0.5)}>-</button>
+            <span>{horasPorDia[dia].toFixed(1)} h</span>
+            <button className="bg-gray-500 text-white px-3 py-1 rounded" onClick={() => alterarHoras(dia, 0.5)}>+</button>
           </div>
         ))}
       </div>
-      <button
-        onClick={gerarDistribuicao}
-        className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-      >
-        Calcular planejamento
-      </button>
+
+      <ResultadoMeses planejamento={planejamento} totalAnual={totalAnual} />
     </div>
   );
 }
-
-export default FormularioHoras;
