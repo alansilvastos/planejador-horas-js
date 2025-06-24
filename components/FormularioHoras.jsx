@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import calendario from '../data/calendario';
+import meses, { calcularHorasMensais } from '../data/calendario';
 import ResultadoMeses from './ResultadoMeses';
 
 const diasSemana = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
@@ -20,18 +20,13 @@ export default function FormularioHoras() {
   const [totalAnual, setTotalAnual] = useState(0);
 
   useEffect(() => {
+    const totais = calcularHorasMensais(horasPorDia);
     const novoPlanejamento = {};
     let total = 0;
 
-    Object.keys(calendario).forEach((mes) => {
-      const dias = calendario[mes];
-      let totalMes = 0;
-
-      diasSemana.forEach((dia) => {
-        totalMes += dias[dia] * horasPorDia[dia];
-      });
-
-      novoPlanejamento[mes] = totalMes;
+    meses.forEach((nomeMes, index) => {
+      const totalMes = totais[index];
+      novoPlanejamento[nomeMes] = totalMes;
       total += totalMes;
     });
 
