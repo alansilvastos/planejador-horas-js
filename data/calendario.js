@@ -5,18 +5,18 @@ const meses = [
 ];
 
 const calendario = [
-  { segunda: 5, terca: 4, quarta: 4, quinta: 4, sexta: 4, sabado: 4, domingo: 4 },
-  { segunda: 4, terca: 5, quarta: 5, quinta: 5, sexta: 5, sabado: 4, domingo: 4 },
-  { segunda: 4, terca: 4, quarta: 4, quinta: 4, sexta: 4, sabado: 5, domingo: 5 },
-  { segunda: 5, terca: 5, quarta: 5, quinta: 4, sexta: 4, sabado: 4, domingo: 4 },
-  { segunda: 4, terca: 4, quarta: 5, quinta: 5, sexta: 5, sabado: 4, domingo: 4 },
-  { segunda: 4, terca: 4, quarta: 4, quinta: 4, sexta: 4, sabado: 5, domingo: 4 },
-  { segunda: 5, terca: 4, quarta: 4, quinta: 4, sexta: 4, sabado: 5, domingo: 5 },
-  { segunda: 4, terca: 5, quarta: 5, quinta: 5, sexta: 4, sabado: 4, domingo: 4 },
-  { segunda: 4, terca: 4, quarta: 4, quinta: 5, sexta: 5, sabado: 5, domingo: 4 },
-  { segunda: 5, terca: 4, quarta: 4, quinta: 4, sexta: 4, sabado: 5, domingo: 5 },
-  { segunda: 4, terca: 5, quarta: 5, quinta: 5, sexta: 4, sabado: 4, domingo: 4 },
-  { segunda: 4, terca: 4, quarta: 4, quinta: 4, sexta: 5, sabado: 5, domingo: 5 }
+  { Segunda: 5, Terça: 4, Quarta: 4, Quinta: 4, Sexta: 4, Sábado: 4, Domingo: 4 },
+  { Segunda: 4, Terça: 5, Quarta: 5, Quinta: 5, Sexta: 5, Sábado: 4, Domingo: 4 },
+  { Segunda: 4, Terça: 4, Quarta: 4, Quinta: 4, Sexta: 4, Sábado: 5, Domingo: 5 },
+  { Segunda: 5, Terça: 5, Quarta: 5, Quinta: 4, Sexta: 4, Sábado: 4, Domingo: 4 },
+  { Segunda: 4, Terça: 4, Quarta: 5, Quinta: 5, Sexta: 5, Sábado: 4, Domingo: 4 },
+  { Segunda: 4, Terça: 4, Quarta: 4, Quinta: 4, Sexta: 4, Sábado: 5, Domingo: 4 },
+  { Segunda: 5, Terça: 4, Quarta: 4, Quinta: 4, Sexta: 4, Sábado: 5, Domingo: 5 },
+  { Segunda: 4, Terça: 5, Quarta: 5, Quinta: 5, Sexta: 4, Sábado: 4, Domingo: 4 },
+  { Segunda: 4, Terça: 4, Quarta: 4, Quinta: 5, Sexta: 5, Sábado: 5, Domingo: 4 },
+  { Segunda: 5, Terça: 4, Quarta: 4, Quinta: 4, Sexta: 4, Sábado: 5, Domingo: 5 },
+  { Segunda: 4, Terça: 5, Quarta: 5, Quinta: 5, Sexta: 4, Sábado: 4, Domingo: 4 },
+  { Segunda: 4, Terça: 4, Quarta: 4, Quinta: 4, Sexta: 5, Sábado: 5, Domingo: 5 }
 ];
 
 function calcularHorasMensais(horasPorDia) {
