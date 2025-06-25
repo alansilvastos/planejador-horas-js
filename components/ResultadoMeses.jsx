@@ -6,12 +6,12 @@ export default function ResultadoMeses({ planejamento, totalAnual, tipo }) {
   const [mesMetaRegular, setMesMetaRegular] = useState('');
 
   const metasAuxiliar = {
-    'Auxiliar 15h': 15,
-    'Auxiliar 30h': 30,
+    auxiliar15: 15,
+    auxiliar30: 30,
   };
 
   useEffect(() => {
-    if (tipo === 'Pioneiro Regular') {
+    if (tipo === 'regular') {
       if (totalAnual >= 600) {
         let acumulado = 0;
         for (const [mes, total] of Object.entries(planejamento)) {
@@ -25,15 +25,15 @@ export default function ResultadoMeses({ planejamento, totalAnual, tipo }) {
       } else {
         setMensagem(`❌ Meta ainda não atingida`);
       }
-    } else if (tipo === 'Auxiliar 15h' || tipo === 'Auxiliar 30h') {
+    } else if (tipo === 'auxiliar15' || tipo === 'auxiliar30') {
       const restante = 600 - totalAnual;
       setMensagem(`Total Anual: ${totalAnual.toFixed(1)} h — Faltam ${restante.toFixed(1)} h para 600 h`);
     }
   }, [planejamento, totalAnual, tipo, mesMetaRegular]);
 
   const verificarAtingiuMetaMensal = (horas) => {
-    if (tipo === 'Auxiliar 15h') return horas >= 15;
-    if (tipo === 'Auxiliar 30h') return horas >= 30;
+    if (tipo === 'auxiliar15') return horas >= 15;
+    if (tipo === 'auxiliar30') return horas >= 30;
     return false;
   };
 
@@ -45,7 +45,7 @@ export default function ResultadoMeses({ planejamento, totalAnual, tipo }) {
           <div
             key={mes}
             className={`${
-              tipo === 'Pioneiro Regular' && mes === mesMetaRegular
+              tipo === 'regular' && mes === mesMetaRegular
                 ? 'text-green-600 font-bold'
                 : verificarAtingiuMetaMensal(horas)
                 ? 'text-green-500 font-semibold'
@@ -57,20 +57,24 @@ export default function ResultadoMeses({ planejamento, totalAnual, tipo }) {
         ))}
       </div>
 
-      {tipo === 'Pioneiro Regular' && (
-        <p className={`mt-4 text-base ${totalAnual >= 600 ? 'text-green-600' : 'text-red-500'}`}>
-          {mensagem}
-        </p>
-      )}
-
-      {(tipo === 'Auxiliar 15h' || tipo === 'Auxiliar 30h') && (
-        <div className="mt-4 space-y-1">
-          <p className="text-base text-gray-800 font-semibold">Total Anual: {totalAnual.toFixed(1)} h</p>
-          <p className={`text-base ${totalAnual >= 600 ? 'text-green-600' : 'text-orange-600'}`}>
+      <div className="mt-4 space-y-1 text-center">
+        {tipo === 'regular' && (
+          <p className={`text-base ${totalAnual >= 600 ? 'text-green-600' : 'text-red-500'}`}>
             {mensagem}
           </p>
-        </div>
-      )}
+        )}
+
+        {(tipo === 'auxiliar15' || tipo === 'auxiliar30') && (
+          <>
+            <p className="text-base font-semibold text-gray-700">
+              Total Anual: {totalAnual.toFixed(1)} h
+            </p>
+            <p className={`text-sm ${totalAnual >= 600 ? 'text-green-600' : 'text-purple-600'}`}>
+              {mensagem}
+            </p>
+          </>
+        )}
+      </div>
     </div>
   );
 }
