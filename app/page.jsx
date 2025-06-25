@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import FormularioHoras from '../components/FormularioHoras';
+import FormularioHoras from './components/FormularioHoras';
 
 export default function Home() {
   const [tipoSelecionado, setTipoSelecionado] = useState('regular');
