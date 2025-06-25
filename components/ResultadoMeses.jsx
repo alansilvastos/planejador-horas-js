@@ -59,9 +59,14 @@ export default function ResultadoMeses({ planejamento, totalAnual, tipo }) {
 
       <div className="mt-4 space-y-1 text-center">
         {tipo === 'regular' && (
-          <p className={`text-base ${totalAnual >= 600 ? 'text-green-600' : 'text-red-500'}`}>
-            {mensagem}
-          </p>
+          <>
+            <p className="text-base font-semibold text-gray-700">
+              Total Anual: {totalAnual.toFixed(1)} h
+            </p>
+            <p className={`text-base ${totalAnual >= 600 ? 'text-green-600' : 'text-red-500'}`}>
+              {mensagem}
+            </p>
+          </>
         )}
 
         {(tipo === 'auxiliar15' || tipo === 'auxiliar30') && (
