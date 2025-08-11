@@ -2,7 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid';
 
-export default function FormularioHoras({ tipoSelecionado }) {
+export default function FormularioHoras(props) {
+  // aceita tanto props.tipo quanto props.tipoSelecionado (compatibilidade)
+  const tipo = props.tipo ?? props.tipoSelecionado ?? 'regular';
+
   const [horasSemana, setHorasSemana] = useState({
     seg: 0, ter: 0, qua: 0, qui: 0, sex: 0, sab: 0, dom: 0
   });
@@ -21,43 +24,55 @@ export default function FormularioHoras({ tipoSelecionado }) {
     'Maio 2026', 'Junho 2026', 'Julho 2026', 'Agosto 2026'
   ];
 
+  // calcula resultados sempre que horasSemana ou tipo mudarem
   useEffect(() => {
     calcularResultado();
-  }, [horasSemana, tipoSelecionado]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [horasSemana, tipo]);
 
   const handleChange = (dia, valor) => {
-    setHorasSemana({ ...horasSemana, [dia]: parseFloat(valor) || 0 });
+    // parseFloat e fallback para 0
+    const v = parseFloat(valor);
+    setHorasSemana(prev => ({ ...prev, [dia]: isNaN(v) ? 0 : v }));
   };
 
   const calcularResultado = () => {
-    const horasMensais = meses.map(() => {
-      const semanal = Object.values(horasSemana).reduce((acc, val) => acc + val, 0);
-      return semanal * 4.345; // semanas médias no mês
-    });
+    // total semanal
+    const totalSem = Object.values(horasSemana).reduce((a, b) => a + (Number(b) || 0), 0);
+    setTotalSemanal(totalSem);
 
-    const totalSemanalCalc = Object.values(horasSemana).reduce((a, b) => a + b, 0);
-    setTotalSemanal(totalSemanalCalc);
+    // se quiser precisão por calendário real, troque essa regra pela função calcularHorasMensais
+    // aqui usamos média de 4.345 semanas por mês (meses médios)
+    const fator = 4.345;
+    const horasMensais = meses.map(() => totalSem * fator);
 
     setResultado(horasMensais);
   };
 
   const limpar = () => {
     setHorasSemana({ seg: 0, ter: 0, qua: 0, qui: 0, sex: 0, sab: 0, dom: 0 });
+    setResultado([]);
+    setTotalSemanal(0);
   };
+
+  // pegar meta mensal com segurança
+  const metaObj = metas[tipo] ?? { anual: null, mensal: null };
+  const metaMensal = metaObj.mensal;
 
   return (
     <div className="bg-white p-6 rounded-2xl shadow-lg w-full">
       <h2 className="text-xl font-bold text-center mb-4">Horas por Dia da Semana</h2>
+
       <div className="grid grid-cols-3 gap-4 mb-4">
-        {Object.keys(horasSemana).map((dia) => (
-          <div key={dia} className="flex flex-col items-center">
-            <label className="capitalize">{dia}</label>
+        {Object.keys(horasSemana).map((diaKey) => (
+          <div key={diaKey} className="flex flex-col items-center">
+            <label className="capitalize mb-1">{diaKey}</label>
             <input
               type="number"
               step="0.5"
               min="0"
-              value={horasSemana[dia]}
-              onChange={(e) => handleChange(dia, e.target.value)}
+              value={horasSemana[diaKey]}
+              onChange={(e) => handleChange(diaKey, e.target.value)}
               className="border rounded p-2 w-20 text-center"
             />
           </div>
@@ -73,7 +88,7 @@ export default function FormularioHoras({ tipoSelecionado }) {
         </button>
       </div>
 
-      <p className="text-center text-lg font-semibold">
+      <p className="text-center text-lg font-semibold mb-6">
         Total semanal: <span className="text-blue-600">{totalSemanal.toFixed(1)} h</span>
       </p>
 
@@ -82,16 +97,17 @@ export default function FormularioHoras({ tipoSelecionado }) {
       </h3>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {resultado.map((horas, idx) => {
-          const meta = metas[tipoSelecionado].mensal;
-          const atingiuMeta = meta ? horas >= meta : false;
+          const atingiuMeta = (metaMensal != null) ? horas >= metaMensal : false;
 
           return (
             <div
               key={idx}
-              className="flex flex-col items-center p-4 border rounded-lg shadow-md"
+              className={`flex flex-col items-center p-4 border rounded-lg shadow-md ${
+                atingiuMeta ? 'bg-green-50 border-green-300' : 'bg-gray-50 border-gray-200'
+              }`}
             >
-              <span className="font-semibold">{meses[idx]}</span>
-              <span>{horas.toFixed(1)} h</span>
+              <span className="font-semibold text-center">{meses[idx]}</span>
+              <span className="text-lg">{horas.toFixed(1)} h</span>
               {atingiuMeta ? (
                 <CheckCircleIcon className="w-6 h-6 text-green-500 mt-2" />
               ) : (
