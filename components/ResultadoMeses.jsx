@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid';
 
 export default function ResultadoMeses({ planejamento, totalAnual, tipo }) {
   const [mensagem, setMensagem] = useState('');
@@ -21,13 +22,15 @@ export default function ResultadoMeses({ planejamento, totalAnual, tipo }) {
             break;
           }
         }
-        setMensagem(`✅ Meta Atingida em ${mesMetaRegular}`);
+        setMensagem(`Meta Atingida em ${mesMetaRegular}`);
       } else {
-        setMensagem(`❌ Meta ainda não atingida`);
+        setMensagem(`Meta ainda não atingida`);
       }
     } else if (tipo === 'auxiliar15' || tipo === 'auxiliar30') {
       const restante = 600 - totalAnual;
-      setMensagem(`Total Anual: ${totalAnual.toFixed(1)} h — Faltam ${restante.toFixed(1)} h para 600 h`);
+      setMensagem(
+        `Faltam ${restante > 0 ? restante.toFixed(1) : 0} h para atingir 600 h no ano`
+      );
     }
   }, [planejamento, totalAnual, tipo, mesMetaRegular]);
 
@@ -39,46 +42,54 @@ export default function ResultadoMeses({ planejamento, totalAnual, tipo }) {
 
   return (
     <div className="mt-8">
-      <h3 className="text-xl font-bold text-blue-700 mb-4">Horas por Mês</h3>
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-left max-w-md mx-auto">
-        {Object.entries(planejamento).map(([mes, horas]) => (
-          <div
-            key={mes}
-            className={`${
-              tipo === 'regular' && mes === mesMetaRegular
-                ? 'text-green-600 font-bold'
-                : verificarAtingiuMetaMensal(horas)
-                ? 'text-green-500 font-semibold'
-                : ''
-            }`}
-          >
-            {mes}: {horas.toFixed(1)} h
-          </div>
-        ))}
+      <h3 className="text-xl font-bold text-blue-700 mb-4 text-center">
+        Resumo do Planejamento
+      </h3>
+
+      {/* Grid de meses */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        {Object.entries(planejamento).map(([mes, horas]) => {
+          const metaMensalAtingida = verificarAtingiuMetaMensal(horas);
+          const metaAnualAtingida =
+            tipo === 'regular' && mes === mesMetaRegular && totalAnual >= 600;
+
+          return (
+            <div
+              key={mes}
+              className={`p-4 rounded-xl shadow-md flex flex-col items-center ${
+                metaAnualAtingida || metaMensalAtingida
+                  ? 'bg-green-100 border border-green-400'
+                  : 'bg-gray-50 border border-gray-200'
+              }`}
+            >
+              <span className="font-semibold">{mes}</span>
+              <span className="text-lg">{horas.toFixed(1)} h</span>
+              {metaAnualAtingida || metaMensalAtingida ? (
+                <CheckCircleIcon className="w-6 h-6 text-green-600 mt-1" />
+              ) : (
+                <XCircleIcon className="w-6 h-6 text-red-500 mt-1" />
+              )}
+            </div>
+          );
+        })}
       </div>
 
-      <div className="mt-4 space-y-1 text-center">
-        {tipo === 'regular' && (
-          <>
-            <p className="text-base font-semibold text-gray-700">
-              Total Anual: {totalAnual.toFixed(1)} h
-            </p>
-            <p className={`text-base ${totalAnual >= 600 ? 'text-green-600' : 'text-red-500'}`}>
-              {mensagem}
-            </p>
-          </>
-        )}
+      {/* Totais e mensagens */}
+      <div className="mt-6 text-center space-y-2">
+        <p className="text-lg font-semibold text-gray-800">
+          Total Anual: {totalAnual.toFixed(1)} h
+        </p>
 
-        {(tipo === 'auxiliar15' || tipo === 'auxiliar30') && (
-          <>
-            <p className="text-base font-semibold text-gray-700">
-              Total Anual: {totalAnual.toFixed(1)} h
-            </p>
-            <p className={`text-sm ${totalAnual >= 600 ? 'text-green-600' : 'text-purple-600'}`}>
-              {mensagem}
-            </p>
-          </>
-        )}
+        <p
+          className={`text-base ${
+            (tipo === 'regular' && totalAnual >= 600) ||
+            (tipo !== 'regular' && totalAnual >= 600)
+              ? 'text-green-600'
+              : 'text-red-500'
+          }`}
+        >
+          {mensagem}
+        </p>
       </div>
     </div>
   );
