@@ -1,10 +1,9 @@
-'use client';
-import { useState, useEffect } from 'react';
-import meses, { calcularHorasMensais } from '../data/calendario';
-import ResultadoMeses from './ResultadoMeses';
+"use client";
+import React, { useState, useEffect } from "react";
+import meses, { calcularHorasMensais } from "../calendario";
 
 export default function FormularioHoras() {
-  const [tipo, setTipo] = useState('regular');
+  const [tipoSelecionado, setTipoSelecionado] = useState("regular");
   const [horasPorDia, setHorasPorDia] = useState({
     Segunda: 0,
     Terça: 0,
@@ -14,138 +13,148 @@ export default function FormularioHoras() {
     Sábado: 0,
     Domingo: 0,
   });
-  const [planejamento, setPlanejamento] = useState({});
-  const [totalAnual, setTotalAnual] = useState(0);
-  const [totalSemanal, setTotalSemanal] = useState(0);
+  const [horasMensais, setHorasMensais] = useState([]);
 
-  // Carregar do localStorage na inicialização
   useEffect(() => {
-    const salvo = localStorage.getItem('planejamentoHoras');
-    if (salvo) {
-      const dados = JSON.parse(salvo);
-      setTipo(dados.tipo || 'regular');
-      setHorasPorDia(dados.horasPorDia || horasPorDia);
-    }
-  }, []);
+    const calculo = calcularHorasMensais(horasPorDia);
+    setHorasMensais(calculo);
+  }, [horasPorDia]);
 
-  // Salvar no localStorage sempre que mudar
-  useEffect(() => {
-    localStorage.setItem(
-      'planejamentoHoras',
-      JSON.stringify({ tipo, horasPorDia })
-    );
-    calcular();
-  }, [tipo, horasPorDia]);
-
-  const handleHorasChange = (dia, valor) => {
-    setHorasPorDia({ ...horasPorDia, [dia]: parseFloat(valor) || 0 });
+  const metas = {
+    regular: { anual: 600, mensal: 50 },
+    auxiliar30: { anual: null, mensal: 30 },
+    auxiliar15: { anual: null, mensal: 15 },
   };
 
-  const calcular = () => {
-    const totaisMensais = calcularHorasMensais(horasPorDia);
-    const plano = {};
-    meses.forEach((mes, i) => {
-      plano[mes] = totaisMensais[i];
-    });
-    setPlanejamento(plano);
-
-    const anual = totaisMensais.reduce((acc, val) => acc + val, 0);
-    setTotalAnual(anual);
-
-    const semanal = Object.values(horasPorDia).reduce((acc, val) => acc + val, 0);
-    setTotalSemanal(semanal);
-  };
-
-  const limpar = () => {
+  const handleChange = (dia, valor) => {
     setHorasPorDia({
-      Segunda: 0,
-      Terça: 0,
-      Quarta: 0,
-      Quinta: 0,
-      Sexta: 0,
-      Sábado: 0,
-      Domingo: 0,
+      ...horasPorDia,
+      [dia]: parseFloat(valor) || 0,
     });
-    setPlanejamento({});
-    setTotalAnual(0);
-    setTotalSemanal(0);
-    localStorage.removeItem('planejamentoHoras');
   };
+
+  const totalAno = horasMensais.reduce((acc, h) => acc + h, 0);
+  const metaAtual = metas[tipoSelecionado];
+  const faltamPara600 =
+    tipoSelecionado !== "regular" ? Math.max(0, 600 - totalAno) : 0;
+
+  // Encontrar mês que atinge 600 horas para regular
+  let mesAlvo = null;
+  if (tipoSelecionado === "regular") {
+    let acumulado = 0;
+    for (let i = 0; i < horasMensais.length; i++) {
+      acumulado += horasMensais[i];
+      if (acumulado >= metaAtual.anual) {
+        mesAlvo = meses[i];
+        break;
+      }
+    }
+  }
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-2xl">
-      <h2 className="text-2xl font-bold text-center mb-6 text-blue-700">
-        Planejador de Horas do Pioneiro
+    <div className="max-w-3xl mx-auto p-4 bg-white shadow-lg rounded-lg">
+      <h2 className="text-2xl font-bold mb-4 text-center">
+        Planejador de Horas
       </h2>
 
       {/* Seleção do tipo */}
-      <div className="flex justify-center gap-3 mb-6">
+      <div className="flex justify-center gap-2 mb-4">
         <button
-          onClick={() => setTipo('regular')}
-          className={`px-4 py-2 rounded-full ${
-            tipo === 'regular' ? 'bg-blue-600 text-white' : 'bg-gray-200'
+          className={`px-3 py-1 rounded ${
+            tipoSelecionado === "regular"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-200"
           }`}
+          onClick={() => setTipoSelecionado("regular")}
         >
           Pioneiro Regular
         </button>
         <button
-          onClick={() => setTipo('auxiliar30')}
-          className={`px-4 py-2 rounded-full ${
-            tipo === 'auxiliar30' ? 'bg-green-600 text-white' : 'bg-gray-200'
+          className={`px-3 py-1 rounded ${
+            tipoSelecionado === "auxiliar30"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-200"
           }`}
+          onClick={() => setTipoSelecionado("auxiliar30")}
         >
-          Auxiliar 30h
+          Pioneiro Auxiliar 30h
         </button>
         <button
-          onClick={() => setTipo('auxiliar15')}
-          className={`px-4 py-2 rounded-full ${
-            tipo === 'auxiliar15' ? 'bg-purple-600 text-white' : 'bg-gray-200'
+          className={`px-3 py-1 rounded ${
+            tipoSelecionado === "auxiliar15"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-200"
           }`}
+          onClick={() => setTipoSelecionado("auxiliar15")}
         >
-          Auxiliar 15h
+          Pioneiro Auxiliar 15h
         </button>
       </div>
 
-      {/* Formulário de horas por dia */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
+      {/* Tabela de dias */}
+      <div className="grid grid-cols-2 gap-3 mb-4">
         {Object.keys(horasPorDia).map((dia) => (
-          <div key={dia} className="flex flex-col items-center">
+          <div key={dia} className="flex justify-between items-center">
             <label className="font-medium">{dia}</label>
             <input
               type="number"
+              step="0.5"
               min="0"
-              step="0.25"
               value={horasPorDia[dia]}
-              onChange={(e) => handleHorasChange(dia, e.target.value)}
-              className="border rounded-lg p-2 w-20 text-center"
+              onChange={(e) => handleChange(dia, e.target.value)}
+              className="w-20 border rounded px-2 py-1"
             />
           </div>
         ))}
       </div>
 
-      {/* Botões */}
-      <div className="flex justify-center gap-4 mb-6">
-        <button
-          onClick={limpar}
-          className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-        >
-          Limpar
-        </button>
-      </div>
+      {/* Resumo dos meses */}
+      <h3 className="text-lg font-semibold mb-2">Resumo Mensal</h3>
+      <ul className="space-y-1">
+        {meses.map((mes, index) => {
+          const horas = horasMensais[index] || 0;
+          const atingiuMeta =
+            tipoSelecionado === "regular"
+              ? horas >= metaAtual.mensal
+              : horas >= metaAtual.mensal;
+          return (
+            <li
+              key={mes}
+              className={`flex justify-between items-center p-2 rounded ${
+                tipoSelecionado === "regular" && mes === mesAlvo
+                  ? "bg-green-100 font-bold"
+                  : ""
+              }`}
+            >
+              <span>{mes}</span>
+              <span>
+                {horas.toFixed(1)}h{" "}
+                {atingiuMeta ? "✅" : "❌"}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
 
-      {/* Total semanal */}
-      <div className="text-center mb-6">
-        <p className="text-lg font-semibold text-gray-700">
-          Total semanal: <span className="text-blue-600">{totalSemanal.toFixed(1)} h</span>
+      {/* Resumo final */}
+      <div className="mt-4 p-3 border-t text-center">
+        <p>
+          <strong>Total no ano:</strong> {totalAno.toFixed(1)} horas
         </p>
+        {tipoSelecionado === "regular" && (
+          <p>
+            Meta anual: {metaAtual.anual} horas
+            {mesAlvo && (
+              <span> — Alvo atingido em {mesAlvo}</span>
+            )}
+          </p>
+        )}
+        {tipoSelecionado !== "regular" && (
+          <p>
+            Faltam {faltamPara600.toFixed(1)} horas para ser Pioneiro Regular
+          </p>
+        )}
       </div>
-
-      {/* Resultados */}
-      <ResultadoMeses
-        planejamento={planejamento}
-        totalAnual={totalAnual}
-        tipo={tipo}
-      />
     </div>
   );
 }
