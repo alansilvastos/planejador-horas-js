@@ -1,128 +1,151 @@
-"use client";
-import React, { useState, useEffect } from "react";
-import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/solid";
+'use client';
+import { useState, useEffect } from 'react';
+import meses, { calcularHorasMensais } from '../data/calendario';
+import ResultadoMeses from './ResultadoMeses';
 
 export default function FormularioHoras() {
-  const [horasSemana, setHorasSemana] = useState(
-    JSON.parse(localStorage.getItem("horasSemana")) || {
-      Seg: 0,
-      Ter: 0,
-      Qua: 0,
-      Qui: 0,
-      Sex: 0,
-      Sáb: 0,
-      Dom: 0,
-    }
-  );
-  const [meta, setMeta] = useState(
-    localStorage.getItem("meta") || "Pioneiro Regular"
-  );
+  const [tipo, setTipo] = useState('regular');
+  const [horasPorDia, setHorasPorDia] = useState({
+    Segunda: 0,
+    Terça: 0,
+    Quarta: 0,
+    Quinta: 0,
+    Sexta: 0,
+    Sábado: 0,
+    Domingo: 0,
+  });
+  const [planejamento, setPlanejamento] = useState({});
+  const [totalAnual, setTotalAnual] = useState(0);
   const [totalSemanal, setTotalSemanal] = useState(0);
-  const [resumoMeses, setResumoMeses] = useState([]);
-  const metas = {
-    "Pioneiro Regular": 600,
-    "Auxiliar 30h": 30,
-    "Auxiliar 15h": 15,
+
+  // Carregar do localStorage na inicialização
+  useEffect(() => {
+    const salvo = localStorage.getItem('planejamentoHoras');
+    if (salvo) {
+      const dados = JSON.parse(salvo);
+      setTipo(dados.tipo || 'regular');
+      setHorasPorDia(dados.horasPorDia || horasPorDia);
+    }
+  }, []);
+
+  // Salvar no localStorage sempre que mudar
+  useEffect(() => {
+    localStorage.setItem(
+      'planejamentoHoras',
+      JSON.stringify({ tipo, horasPorDia })
+    );
+    calcular();
+  }, [tipo, horasPorDia]);
+
+  const handleHorasChange = (dia, valor) => {
+    setHorasPorDia({ ...horasPorDia, [dia]: parseFloat(valor) || 0 });
   };
 
-  const meses = [
-    "Setembro 2025", "Outubro 2025", "Novembro 2025", "Dezembro 2025",
-    "Janeiro 2026", "Fevereiro 2026", "Março 2026", "Abril 2026",
-    "Maio 2026", "Junho 2026", "Julho 2026", "Agosto 2026",
-  ];
-
-  // Salvar no localStorage
-  useEffect(() => {
-    localStorage.setItem("horasSemana", JSON.stringify(horasSemana));
-    localStorage.setItem("meta", meta);
-  }, [horasSemana, meta]);
-
-  // Calcular totais
-  useEffect(() => {
-    const total = Object.values(horasSemana).reduce((acc, h) => acc + parseFloat(h || 0), 0);
-    setTotalSemanal(total);
-
-    const semanasPorMes = [4.1, 4.3, 4.2, 4.3, 4.3, 4, 4.3, 4.3, 4.3, 4.1, 4.3, 4.3];
-    const resumo = meses.map((mes, i) => {
-      const totalMes = total * semanasPorMes[i];
-      const metaMes = meta === "Pioneiro Regular" ? 50 : metas[meta];
-      return { mes, totalMes, atingiu: totalMes >= metaMes };
+  const calcular = () => {
+    const totaisMensais = calcularHorasMensais(horasPorDia);
+    const plano = {};
+    meses.forEach((mes, i) => {
+      plano[mes] = totaisMensais[i];
     });
-    setResumoMeses(resumo);
-  }, [horasSemana, meta]);
+    setPlanejamento(plano);
 
-  const alterarHoras = (dia, valor) => {
-    setHorasSemana((prev) => ({ ...prev, [dia]: valor }));
+    const anual = totaisMensais.reduce((acc, val) => acc + val, 0);
+    setTotalAnual(anual);
+
+    const semanal = Object.values(horasPorDia).reduce((acc, val) => acc + val, 0);
+    setTotalSemanal(semanal);
   };
 
   const limpar = () => {
-    setHorasSemana({ Seg: 0, Ter: 0, Qua: 0, Qui: 0, Sex: 0, Sáb: 0, Dom: 0 });
+    setHorasPorDia({
+      Segunda: 0,
+      Terça: 0,
+      Quarta: 0,
+      Quinta: 0,
+      Sexta: 0,
+      Sábado: 0,
+      Domingo: 0,
+    });
+    setPlanejamento({});
+    setTotalAnual(0);
+    setTotalSemanal(0);
+    localStorage.removeItem('planejamentoHoras');
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow-lg">
-      {/* Botões de meta */}
-      <div className="flex justify-center mb-4 gap-2">
-        {Object.keys(metas).map((tipo) => (
-          <button
-            key={tipo}
-            onClick={() => setMeta(tipo)}
-            className={`px-4 py-2 rounded-lg font-medium ${
-              meta === tipo ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"
-            }`}
-          >
-            {tipo}
-          </button>
-        ))}
+    <div className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-2xl">
+      <h2 className="text-2xl font-bold text-center mb-6 text-blue-700">
+        Planejador de Horas do Pioneiro
+      </h2>
+
+      {/* Seleção do tipo */}
+      <div className="flex justify-center gap-3 mb-6">
+        <button
+          onClick={() => setTipo('regular')}
+          className={`px-4 py-2 rounded-full ${
+            tipo === 'regular' ? 'bg-blue-600 text-white' : 'bg-gray-200'
+          }`}
+        >
+          Pioneiro Regular
+        </button>
+        <button
+          onClick={() => setTipo('auxiliar30')}
+          className={`px-4 py-2 rounded-full ${
+            tipo === 'auxiliar30' ? 'bg-green-600 text-white' : 'bg-gray-200'
+          }`}
+        >
+          Auxiliar 30h
+        </button>
+        <button
+          onClick={() => setTipo('auxiliar15')}
+          className={`px-4 py-2 rounded-full ${
+            tipo === 'auxiliar15' ? 'bg-purple-600 text-white' : 'bg-gray-200'
+          }`}
+        >
+          Auxiliar 15h
+        </button>
       </div>
 
-      {/* Inputs por dia */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        {Object.keys(horasSemana).map((dia) => (
+      {/* Formulário de horas por dia */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
+        {Object.keys(horasPorDia).map((dia) => (
           <div key={dia} className="flex flex-col items-center">
-            <label className="font-semibold">{dia}</label>
+            <label className="font-medium">{dia}</label>
             <input
               type="number"
-              step="0.5"
               min="0"
-              value={horasSemana[dia]}
-              onChange={(e) => alterarHoras(dia, parseFloat(e.target.value))}
-              className="w-20 text-center border rounded-lg p-1"
+              step="0.25"
+              value={horasPorDia[dia]}
+              onChange={(e) => handleHorasChange(dia, e.target.value)}
+              className="border rounded-lg p-2 w-20 text-center"
             />
           </div>
         ))}
       </div>
 
-      {/* Botão limpar */}
-      <div className="flex justify-center mb-4">
+      {/* Botões */}
+      <div className="flex justify-center gap-4 mb-6">
         <button
           onClick={limpar}
-          className="px-6 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-md"
+          className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
         >
           Limpar
         </button>
       </div>
 
       {/* Total semanal */}
-      <p className="text-center font-semibold">
-        Total semanal: <span className="text-blue-600">{totalSemanal} h</span>
-      </p>
-
-      {/* Resumo */}
-      <h2 className="text-xl font-bold text-center text-blue-700 mt-6">Resumo do Planejamento</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4">
-        {resumoMeses.map(({ mes, totalMes, atingiu }) => (
-          <div key={mes} className="bg-gray-50 p-4 rounded-lg shadow flex flex-col items-center">
-            <span className="font-semibold">{mes}</span>
-            <span>{totalMes.toFixed(1)} h</span>
-            {atingiu ? (
-              <CheckCircleIcon className="w-6 h-6 text-green-500 mt-1" />
-            ) : (
-              <XCircleIcon className="w-6 h-6 text-red-500 mt-1" />
-            )}
-          </div>
-        ))}
+      <div className="text-center mb-6">
+        <p className="text-lg font-semibold text-gray-700">
+          Total semanal: <span className="text-blue-600">{totalSemanal.toFixed(1)} h</span>
+        </p>
       </div>
+
+      {/* Resultados */}
+      <ResultadoMeses
+        planejamento={planejamento}
+        totalAnual={totalAnual}
+        tipo={tipo}
+      />
     </div>
   );
 }
