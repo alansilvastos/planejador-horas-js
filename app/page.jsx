@@ -1,51 +1,15 @@
-'use client';
+"use client";
+import FormularioHoras from "../components/FormularioHoras";
 
-import { useState } from 'react';
-import FormularioHoras from '../components/FormularioHoras';
-
-export default function Home() {
-  const [tipoSelecionado, setTipoSelecionado] = useState('regular');
-
+export default function Page() {
   return (
-    <main className="flex flex-col items-center justify-center w-full max-w-5xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4 text-center">
-        Planejador de Horas do Pioneiro
-      </h1>
-
-      <div className="flex flex-wrap justify-center gap-4 mb-6">
-        <button
-          className={`px-4 py-2 rounded ${
-            tipoSelecionado === 'regular'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-200'
-          }`}
-          onClick={() => setTipoSelecionado('regular')}
-        >
-          Pioneiro Regular
-        </button>
-        <button
-          className={`px-4 py-2 rounded ${
-            tipoSelecionado === 'auxiliar30'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-200'
-          }`}
-          onClick={() => setTipoSelecionado('auxiliar30')}
-        >
-          Auxiliar 30h
-        </button>
-        <button
-          className={`px-4 py-2 rounded ${
-            tipoSelecionado === 'auxiliar15'
-              ? 'bg-blue-600 text-white'
-              : 'bg-gray-200'
-          }`}
-          onClick={() => setTipoSelecionado('auxiliar15')}
-        >
-          Auxiliar 15h
-        </button>
+    <main className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-50">
+      <div className="bg-white rounded-2xl shadow-lg p-6 w-full max-w-4xl">
+        <h1 className="text-3xl font-bold text-center mb-6">
+          Planejador de Horas do Pioneiro
+        </h1>
+        <FormularioHoras />
       </div>
-
-      <FormularioHoras tipo={tipoSelecionado} />
     </main>
   );
 }
