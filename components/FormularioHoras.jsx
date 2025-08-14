@@ -18,7 +18,7 @@ export default function FormularioHoras() {
   const [totalAnual, setTotalAnual] = useState(0);
   const [totalSemanal, setTotalSemanal] = useState(0);
 
-  // Carregar dados salvos
+  // Carregar do localStorage na inicialização
   useEffect(() => {
     const salvo = localStorage.getItem('planejamentoHoras');
     if (salvo) {
@@ -28,7 +28,7 @@ export default function FormularioHoras() {
     }
   }, []);
 
-  // Salvar sempre que mudar
+  // Salvar no localStorage sempre que mudar
   useEffect(() => {
     localStorage.setItem(
       'planejamentoHoras',
@@ -38,7 +38,15 @@ export default function FormularioHoras() {
   }, [tipo, horasPorDia]);
 
   const handleHorasChange = (dia, valor) => {
-    setHorasPorDia({ ...horasPorDia, [dia]: parseFloat(valor) || 0 });
+    const num = Math.max(0, parseFloat(valor) || 0);
+    setHorasPorDia({ ...horasPorDia, [dia]: num });
+  };
+
+  const alterarHoras = (dia, delta) => {
+    setHorasPorDia((prev) => {
+      const novoValor = Math.max(0, (prev[dia] || 0) + delta);
+      return { ...prev, [dia]: novoValor };
+    });
   };
 
   const calcular = () => {
@@ -49,8 +57,11 @@ export default function FormularioHoras() {
     });
     setPlanejamento(plano);
 
-    setTotalAnual(totaisMensais.reduce((acc, val) => acc + val, 0));
-    setTotalSemanal(Object.values(horasPorDia).reduce((acc, val) => acc + val, 0));
+    const anual = totaisMensais.reduce((acc, val) => acc + val, 0);
+    setTotalAnual(anual);
+
+    const semanal = Object.values(horasPorDia).reduce((acc, val) => acc + val, 0);
+    setTotalSemanal(semanal);
   };
 
   const limpar = () => {
@@ -71,7 +82,6 @@ export default function FormularioHoras() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-2xl">
-      {/* Título único */}
       <h2 className="text-2xl font-bold text-center mb-6 text-blue-700">
         Planejador de Horas do Pioneiro
       </h2>
@@ -104,24 +114,40 @@ export default function FormularioHoras() {
         </button>
       </div>
 
-      {/* Formulário de horas */}
+      {/* Formulário de horas por dia */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
         {Object.keys(horasPorDia).map((dia) => (
           <div key={dia} className="flex flex-col items-center">
-            <label className="font-medium">{dia}</label>
-            <input
-              type="number"
-              min="0"
-              step="0.5"
-              value={horasPorDia[dia]}
-              onChange={(e) => handleHorasChange(dia, e.target.value)}
-              className="border rounded-lg p-2 w-20 text-center spin-button"
-            />
+            <label className="font-medium mb-1">{dia}</label>
+            <div className="flex items-center">
+              <button
+                type="button"
+                onClick={() => alterarHoras(dia, -0.5)}
+                className="px-2 py-1 bg-gray-300 rounded-l hover:bg-gray-400"
+              >
+                -
+              </button>
+              <input
+                type="number"
+                min="0"
+                step="0.5"
+                value={horasPorDia[dia]}
+                onChange={(e) => handleHorasChange(dia, e.target.value)}
+                className="w-16 text-center border-t border-b"
+              />
+              <button
+                type="button"
+                onClick={() => alterarHoras(dia, 0.5)}
+                className="px-2 py-1 bg-gray-300 rounded-r hover:bg-gray-400"
+              >
+                +
+              </button>
+            </div>
           </div>
         ))}
       </div>
 
-      {/* Botão limpar */}
+      {/* Botões */}
       <div className="flex justify-center gap-4 mb-6">
         <button
           onClick={limpar}
