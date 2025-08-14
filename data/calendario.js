@@ -1,32 +1,63 @@
 const meses = [
-  'Setembro 2025', 'Outubro 2025', 'Novembro 2025', 'Dezembro 2025',
-  'Janeiro 2026', 'Fevereiro 2026', 'Março 2026', 'Abril 2026',
-  'Maio 2026', 'Junho 2026', 'Julho 2026', 'Agosto 2026'
+  "Setembro 2025",
+  "Outubro 2025",
+  "Novembro 2025",
+  "Dezembro 2025",
+  "Janeiro 2026",
+  "Fevereiro 2026",
+  "Março 2026",
+  "Abril 2026",
+  "Maio 2026",
+  "Junho 2026",
+  "Julho 2026",
+  "Agosto 2026"
 ];
 
-const calendario = [
-  { Segunda: 5, Terça: 4, Quarta: 4, Quinta: 4, Sexta: 4, Sábado: 4, Domingo: 4 },
-  { Segunda: 4, Terça: 5, Quarta: 5, Quinta: 5, Sexta: 5, Sábado: 4, Domingo: 4 },
-  { Segunda: 4, Terça: 4, Quarta: 4, Quinta: 4, Sexta: 4, Sábado: 5, Domingo: 5 },
-  { Segunda: 5, Terça: 5, Quarta: 5, Quinta: 4, Sexta: 4, Sábado: 4, Domingo: 4 },
-  { Segunda: 4, Terça: 4, Quarta: 5, Quinta: 5, Sexta: 5, Sábado: 4, Domingo: 4 },
-  { Segunda: 4, Terça: 4, Quarta: 4, Quinta: 4, Sexta: 4, Sábado: 5, Domingo: 4 },
-  { Segunda: 5, Terça: 4, Quarta: 4, Quinta: 4, Sexta: 4, Sábado: 5, Domingo: 5 },
-  { Segunda: 4, Terça: 5, Quarta: 5, Quinta: 5, Sexta: 4, Sábado: 4, Domingo: 4 },
-  { Segunda: 4, Terça: 4, Quarta: 4, Quinta: 5, Sexta: 5, Sábado: 5, Domingo: 4 },
-  { Segunda: 5, Terça: 4, Quarta: 4, Quinta: 4, Sexta: 4, Sábado: 5, Domingo: 5 },
-  { Segunda: 4, Terça: 5, Quarta: 5, Quinta: 5, Sexta: 4, Sábado: 4, Domingo: 4 },
-  { Segunda: 4, Terça: 4, Quarta: 4, Quinta: 4, Sexta: 5, Sábado: 5, Domingo: 5 }
+// Dias da semana reais de cada mês, para cálculo preciso
+const diasNoAnoServico = [
+  // Setembro 2025
+  ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo",
+   "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça"],
+  // Outubro 2025
+  ["Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça",
+   "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta"],
+  // Novembro 2025
+  ["Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta",
+   "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"],
+  // Dezembro 2025
+  ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo",
+   "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta"],
+  // Janeiro 2026
+  ["Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta",
+   "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
+  // Fevereiro 2026
+  ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado",
+   "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
+  // Março 2026
+  ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado",
+   "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça"],
+  // Abril 2026
+  ["Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça",
+   "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta"],
+  // Maio 2026
+  ["Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta",
+   "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"],
+  // Junho 2026
+  ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo",
+   "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"],
+  // Julho 2026
+  ["Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça",
+   "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta"],
+  // Agosto 2026
+  ["Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta",
+   "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta"]
 ];
 
-function calcularHorasMensais(horasPorDia) {
-  return calendario.map((diasNoMes) => {
-    let total = 0;
-    for (const dia in diasNoMes) {
-      total += diasNoMes[dia] * (horasPorDia[dia] || 0);
-    }
-    return total;
-  });
+// Função para calcular as horas por mês
+export function calcularHorasMensais(horasPorDia) {
+  return diasNoAnoServico.map((dias) =>
+    dias.reduce((total, dia) => total + (horasPorDia[dia] || 0), 0)
+  );
 }
 
-export { meses as default, calcularHorasMensais };
+export default meses;
