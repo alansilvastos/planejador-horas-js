@@ -2,8 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+/* Forçar exibição das setas nos inputs numéricos no mobile */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: auto;
+    margin: 0;
+}
 
+input[type=number] {
+    -moz-appearance: number-input; /* Firefox */
+}
+
+/* Fonte e ajustes gerais */
 body {
-  font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', sans-serif;
+    background-color: #f9fafb;
+}
+
+/* Títulos */
+h1, h2, h3, h4 {
+    font-weight: bold;
 }
