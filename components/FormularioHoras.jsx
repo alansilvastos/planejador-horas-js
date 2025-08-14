@@ -18,6 +18,7 @@ export default function FormularioHoras() {
   const [totalAnual, setTotalAnual] = useState(0);
   const [totalSemanal, setTotalSemanal] = useState(0);
 
+  // Carregar dados salvos
   useEffect(() => {
     const salvo = localStorage.getItem('planejamentoHoras');
     if (salvo) {
@@ -27,6 +28,7 @@ export default function FormularioHoras() {
     }
   }, []);
 
+  // Salvar sempre que mudar
   useEffect(() => {
     localStorage.setItem(
       'planejamentoHoras',
@@ -47,11 +49,8 @@ export default function FormularioHoras() {
     });
     setPlanejamento(plano);
 
-    const anual = totaisMensais.reduce((acc, val) => acc + val, 0);
-    setTotalAnual(anual);
-
-    const semanal = Object.values(horasPorDia).reduce((acc, val) => acc + val, 0);
-    setTotalSemanal(semanal);
+    setTotalAnual(totaisMensais.reduce((acc, val) => acc + val, 0));
+    setTotalSemanal(Object.values(horasPorDia).reduce((acc, val) => acc + val, 0));
   };
 
   const limpar = () => {
@@ -72,10 +71,12 @@ export default function FormularioHoras() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-2xl">
+      {/* Título único */}
       <h2 className="text-2xl font-bold text-center mb-6 text-blue-700">
         Planejador de Horas do Pioneiro
       </h2>
 
+      {/* Seleção do tipo */}
       <div className="flex justify-center gap-3 mb-6">
         <button
           onClick={() => setTipo('regular')}
@@ -103,6 +104,7 @@ export default function FormularioHoras() {
         </button>
       </div>
 
+      {/* Formulário de horas */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
         {Object.keys(horasPorDia).map((dia) => (
           <div key={dia} className="flex flex-col items-center">
@@ -113,12 +115,13 @@ export default function FormularioHoras() {
               step="0.5"
               value={horasPorDia[dia]}
               onChange={(e) => handleHorasChange(dia, e.target.value)}
-              className="border rounded-lg p-2 w-20 text-center"
+              className="border rounded-lg p-2 w-20 text-center spin-button"
             />
           </div>
         ))}
       </div>
 
+      {/* Botão limpar */}
       <div className="flex justify-center gap-4 mb-6">
         <button
           onClick={limpar}
@@ -128,12 +131,14 @@ export default function FormularioHoras() {
         </button>
       </div>
 
+      {/* Total semanal */}
       <div className="text-center mb-6">
         <p className="text-lg font-semibold text-gray-700">
           Total semanal: <span className="text-blue-600">{totalSemanal.toFixed(1)} h</span>
         </p>
       </div>
 
+      {/* Resultados */}
       <ResultadoMeses
         planejamento={planejamento}
         totalAnual={totalAnual}
