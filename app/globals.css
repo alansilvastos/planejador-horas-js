@@ -2,24 +2,65 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Forçar exibição das setas nos inputs numéricos no mobile */
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-    -webkit-appearance: auto;
-    margin: 0;
-}
-
-input[type=number] {
-    -moz-appearance: number-input; /* Firefox */
-}
-
-/* Fonte e ajustes gerais */
+/* Corpo geral */
 body {
-    font-family: 'Inter', sans-serif;
-    background-color: #f9fafb;
+  @apply bg-gray-100 text-gray-900;
 }
 
-/* Títulos */
-h1, h2, h3, h4 {
-    font-weight: bold;
+/* Container principal */
+.container {
+  @apply max-w-2xl mx-auto p-4;
+}
+
+/* Ajuste dos inputs com botões laterais */
+input[type="number"] {
+  -moz-appearance: textfield; /* Remove setas no Firefox */
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0; /* Remove setas no Chrome/Safari */
+}
+
+/* Botões + e - */
+button {
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+/* Específico para os botões de incremento */
+button.rounded-l,
+button.rounded-r {
+  font-size: 1.2rem;
+  font-weight: bold;
+  width: 2.2rem;
+  height: 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Input central */
+input.w-16 {
+  height: 2.2rem;
+  font-size: 1rem;
+}
+
+/* Mobile ajustes */
+@media (max-width: 640px) {
+  button.rounded-l,
+  button.rounded-r {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1rem;
+  }
+
+  input.w-16 {
+    width: 3rem;
+    font-size: 0.9rem;
+  }
 }
