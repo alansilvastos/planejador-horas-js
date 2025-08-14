@@ -18,7 +18,6 @@ export default function FormularioHoras() {
   const [totalAnual, setTotalAnual] = useState(0);
   const [totalSemanal, setTotalSemanal] = useState(0);
 
-  // Carregar do localStorage na inicialização
   useEffect(() => {
     const salvo = localStorage.getItem('planejamentoHoras');
     if (salvo) {
@@ -28,7 +27,6 @@ export default function FormularioHoras() {
     }
   }, []);
 
-  // Salvar no localStorage sempre que mudar
   useEffect(() => {
     localStorage.setItem(
       'planejamentoHoras',
@@ -78,7 +76,6 @@ export default function FormularioHoras() {
         Planejador de Horas do Pioneiro
       </h2>
 
-      {/* Seleção do tipo */}
       <div className="flex justify-center gap-3 mb-6">
         <button
           onClick={() => setTipo('regular')}
@@ -106,7 +103,6 @@ export default function FormularioHoras() {
         </button>
       </div>
 
-      {/* Formulário de horas por dia */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
         {Object.keys(horasPorDia).map((dia) => (
           <div key={dia} className="flex flex-col items-center">
@@ -114,7 +110,7 @@ export default function FormularioHoras() {
             <input
               type="number"
               min="0"
-              step="0.25"
+              step="0.5"
               value={horasPorDia[dia]}
               onChange={(e) => handleHorasChange(dia, e.target.value)}
               className="border rounded-lg p-2 w-20 text-center"
@@ -123,7 +119,6 @@ export default function FormularioHoras() {
         ))}
       </div>
 
-      {/* Botões */}
       <div className="flex justify-center gap-4 mb-6">
         <button
           onClick={limpar}
@@ -133,14 +128,12 @@ export default function FormularioHoras() {
         </button>
       </div>
 
-      {/* Total semanal */}
       <div className="text-center mb-6">
         <p className="text-lg font-semibold text-gray-700">
           Total semanal: <span className="text-blue-600">{totalSemanal.toFixed(1)} h</span>
         </p>
       </div>
 
-      {/* Resultados */}
       <ResultadoMeses
         planejamento={planejamento}
         totalAnual={totalAnual}
